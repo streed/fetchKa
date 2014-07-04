@@ -1,83 +1,79 @@
 kafka = require("kafka-node")
 Consumer = kafka.HighLevelConsumer
 
-exports.FetchKaConsumerBuilder = class FetchKaConsumerBuilder
+exports.FetchKaConsumer = class FetchKaConsumer
 
-  constructor: () ->
-    @_topics = []
-    @_options = {}
-    @
-
-  addTopic: (t) ->
-    @_topics.push {topic: t}
-    @
-
-  connectString: (connectStr) ->
-    @_options["connectStr"] = connectStr
-    @
-
-  build: () ->
-    kafkaClient = new kafka.Client
-    return new FetchKaConsumer( new Consumer(kafkaClient, @_topics, @_options), @_topics)
-
-  class FetchKaConsumer
-    constructor: (@_client, topics) ->
-      @_listeners = {}
-
-      for t in topics
-        @_listeners[t.topic] = []
-
-      console.log @_listeners
-
-    _onMessage: (message) ->
-      if message.topic of @_listeners
-        for listener in @_listeners[message.topic]
-          listener.onMessage(message)
-
-    _onError: (err) ->
-      for listener in @_listeners
-        listener.onError(err)
-
-    register: (listener) ->
-      if listener.topic not of @_listeners
-        throw new Error("This client is not listening to: " + listener.topic)
-      @_listeners[listener.topic].push listener
+  class InnerBuilder
+    constructor: () ->
+      @_topics = []
+      @_options = {}
       @
 
-    deregister: (listener) ->
-      @_listeners[listener.topic].filter (l) -> l isnt listener
+    addTopic: (t) ->
+      @_topics.push {topic: t}
       @
 
-    start: () ->
-      @_client.on "message", @_onMessage.bind(@)
-      @_client.on "error", @_onError.bind(@)
+    connectString: (connectStr) ->
+      @_options["connectStr"] = connectStr
+      @
 
-exports.FetchKaHandlerBuilder = class FetchKaHandlerBuilder
+    build: () ->
+      kafkaClient = new kafka.Client
+      return new FetchKaConsumer( new Consumer(kafkaClient, @_topics, @_options), @_topics)
 
-  constructor: () ->
-    @_topic = null
-    @_onMessage = -> return null
-    @_onError = -> return null
+  @Builder: InnerBuilder
 
-  addTopic: (topic) ->
-    @_topic = topic
+  constructor: (@_client, topics) ->
+    @_listeners = {}
+
+    for t in topics
+      @_listeners[t.topic] = []
+
+  _onMessage: (message) ->
+    if message.topic of @_listeners
+      for listener in @_listeners[message.topic]
+        listener.onMessage(message)
+
+  _onError: (err) ->
+    for listener in @_listeners
+      listener.onError(err)
+
+  register: (listener) ->
+    console.log listener.topic
+    if listener.topic not of @_listeners
+      throw new Error("This client is not listening to: " + listener.topic)
+    @_listeners[listener.topic].push listener
     @
 
-  addOnMessage: (func) ->
-    @_onMessage = func
+  deregister: (listener) ->
+    @_listeners[listener.topic].filter (l) -> l isnt listener
     @
 
-  addOnError: (func) ->
-    @_onError = func
-    @
+  start: () ->
+    @_client.on "message", @_onMessage.bind(@)
+    @_client.on "error", @_onError.bind(@)
 
-  build: () ->
-    _inner = class
-      constructor: (topic, onMessage, onError) ->
-        @topic = topic
-        @onMessage = onMessage
-        @onError = onError
+exports.FetchKaHandler = class FetchKaHandler
 
-    return new _inner( @_topic, @_onMessage, @_onError )
+  class InnerBuilder
+    constructor: () ->
+      @_topic = undefined
+      @_onMessage = -> return null
+      @_onError = -> return null
 
+    setTopic: (@_topic) -> @
+
+    setOnMessage: (@_onMessage) -> @
+
+    setOnError: (@_onError) -> @
+
+    build: () ->
+      return new FetchKaHandler(@_topic, @_onMessage, @_onError)
+
+  @Builder: InnerBuilder
+
+  constructor: (topic, onMessage, onError) ->
+    @topic = topic
+    @onMessage = onMessage
+    @onError = onError
         

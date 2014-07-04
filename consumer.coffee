@@ -1,19 +1,20 @@
-FetchKaConsumerBuilder = require("./fetchKa/utils/fetchka.coffee").FetchKaConsumerBuilder
-FetchKaHandlerBuilder = require("./fetchKa/utils/fetchka.coffee").FetchKaHandlerBuilder
+FetchKaConsumer = require("./fetchKa/utils/fetchka.coffee").FetchKaConsumer
+FetchKaHandler = require("./fetchKa/utils/fetchka.coffee").FetchKaHandler
 
 onMessage = (message) ->
   console.log "builder", message
-handler = new FetchKaHandlerBuilder()
-                  .addTopic("orders")
-                  .addOnMessage(onMessage)
+
+handler = new FetchKaHandler.Builder()
+                  .setTopic("orders")
+                  .setOnMessage(onMessage)
                   .build()
 
-console.log handler
-
-consumer = new FetchKaConsumerBuilder()
+consumer = new FetchKaConsumer.Builder()
                   .addTopic("orders")
                   .connectString("localhost:2181/kafka0.8")
                   .build()
+console.log consumer
+
 consumer.register(
   new class
     constructor: () ->
