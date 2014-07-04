@@ -1,0 +1,23 @@
+{
+  "name": "fetchKa",
+  "version": "0.0.1",
+  "description": "Kafka code for all of fetch.",
+  "main": "index.js",
+  "dependencies": {
+    "kafka-node": "~0.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/streed/fetchKa"
+  },
+  "author": "Sean Reed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/streed/fetchKa/issues"
+  },
+  "homepage": "https://github.com/streed/fetchKa"
+}
