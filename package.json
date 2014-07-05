@@ -2,7 +2,7 @@
   "name": "fetchKa",
   "version": "0.0.1",
   "description": "Kafka code for all of fetch.",
-  "main": "index.js",
+  "main": "fetchka.coffee",
   "dependencies": {
     "kafka-node": "~0.2.0"
   },
