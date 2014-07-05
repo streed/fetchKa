@@ -1,5 +1,6 @@
 kafka = require("kafka-node")
 Consumer = kafka.HighLevelConsumer
+Producer = kafka.HighLevelProducer
 
 exports.FetchKaConsumer = class FetchKaConsumer
 
@@ -39,7 +40,6 @@ exports.FetchKaConsumer = class FetchKaConsumer
       listener.onError(err)
 
   register: (listener) ->
-    console.log listener.topic
     if listener.topic not of @_listeners
       throw new Error("This client is not listening to: " + listener.topic)
     @_listeners[listener.topic].push listener
@@ -77,3 +77,48 @@ exports.FetchKaHandler = class FetchKaHandler
     @onMessage = onMessage
     @onError = onError
         
+exports.FetchKaProducer = class FetchKaProducer
+  
+  class InnerBuilder
+    constructor: () ->
+      @_options = {}
+      @_topics = []
+
+    connectString: (connectStr) ->
+      @_options["connectStr"] = connectStr
+      @
+
+    addTopic: (topic) ->
+      @_topics.push topic
+      @
+
+    setTopics: (@_topics) ->
+      @
+
+    build: () ->
+      kafkaClient = new kafka.Client()
+      if(@_topics == undefined)
+        throw new Error("Producer requires a list of valid topics.")
+      return new FetchKaProducer( new Producer(kafkaClient, @_options), @_topics)
+
+  @Builder: InnerBuilder
+
+  constructor: (@_client, @_topics) ->
+    @_isReady = false
+    @
+
+  ready: (cb) ->
+    cb.bind(@)
+    outer = ->
+      @_isReady = true
+      cb()
+
+    @_client.on("ready", outer.bind(@))
+
+  send: (messages, cb) ->
+    if(@_isReady)
+      messages = (message for message in messages when message.topic in @_topics)
+      @_client.send(messages, cb)
+    else
+      throw new Error("Producer is not ready")
+
