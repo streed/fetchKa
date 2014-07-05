@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/streed/fetchKa/issues"
   },
-  "homepage": "https://github.com/streed/fetchKa"
+  "homepage": "https://github.com/streed/fetchKa",
+  "directories": {
+    "example": "example"
+  }
 }
