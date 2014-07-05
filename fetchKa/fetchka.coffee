@@ -67,6 +67,16 @@ exports.FetchKaHandler = class FetchKaHandler
 
     setOnError: (@_onError) -> @
 
+    set: (options) ->
+      if "onMessage" of options
+        @setOnMessage options.onMessage
+      if "onError" of options
+        @setOnError options.onError
+      if "topic" of options
+        @setTopic options.topic
+
+      @
+
     build: () ->
       return new FetchKaHandler(@_topic, @_onMessage, @_onError)
 
