@@ -1,4 +1,4 @@
-fetchka = require("../fetchka.coffee")
+fetchka = require("../fetchka")
 FetchKaConsumer = fetchka.FetchKaConsumer
 FetchKaHandler = fetchka.FetchKaHandler
 
