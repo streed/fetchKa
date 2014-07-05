@@ -1,5 +1,5 @@
-FetchKaConsumer = require("../fetchKa/utils/fetchka.coffee").FetchKaConsumer
-FetchKaHandler = require("../fetchKa/utils/fetchka.coffee").FetchKaHandler
+FetchKaConsumer = require("../fetchKa/fetchka.coffee").FetchKaConsumer
+FetchKaHandler = require("../fetchKa/fetchka.coffee").FetchKaHandler
 
 onMessage = (message) ->
   console.log "builder", message

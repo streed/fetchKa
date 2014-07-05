@@ -1,4 +1,4 @@
-FetchKaProducer = require("../fetchKa/utils/fetchka.coffee").FetchKaProducer
+FetchKaProducer = require("../fetchKa/fetchka.coffee").FetchKaProducer
 
 producer = new FetchKaProducer.Builder()
                 .connectString("localhost:2181/kafka0.8")
