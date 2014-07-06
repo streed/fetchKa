@@ -5,7 +5,10 @@ producer = new FetchKaProducer.Builder()
                 .setTopics(["orders"])
                 .build()
 producer.ready(->
-  producer.send([{topic: "orders", messages: "test", partition: 0}], (err, data) ->
+  producer.sendOne("orders", "test", (err, data) ->
+    console.log err, data
+  )
+  producer.send([{topic: "orders", messages: {message: "test"}, partition: 0}], (err, data) ->
     console.log err, data
   )
 )

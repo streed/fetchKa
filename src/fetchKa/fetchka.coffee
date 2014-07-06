@@ -37,9 +37,15 @@ exports.FetchKaConsumer = class FetchKaConsumer
     LOG.info("Listening to: ", topics)
 
   _onMessage: (message) ->
-    if message.topic of @_listeners
+    topic = message.topic
+    if topic of @_listeners
       LOG.trace("Received a message and forwarding it to the listeners: ", message)
-      for listener in @_listeners[message.topic]
+      try
+        message = JSON.parse message.value
+      catch
+        LOG.info message
+      LOG.info @_listeners, message
+      for listener in @_listeners[topic]
         listener.onMessage(message)
     else
       LOG.debug("Received message was for a topic that I am not following: ", message)
@@ -139,9 +145,24 @@ exports.FetchKaProducer = class FetchKaProducer
 
     @_client.on("ready", outer.bind(@))
 
+  sendOne: (topic, message, cb, batch=false) ->
+    if(topic in @_topics)
+      LOG.trace( "Sending a message to", topic, message)
+      if(batch)
+        LOG.trace("Batching upto 10 messages before sending to kafka.")
+      else
+        LOG.trace("Sending a single message to Kafka")
+        @send([{topic: topic, messages: JSON.stringify {message: message}}], cb)
+    else
+      throw new Error("Topic is not in the valid list of topics: ", @_topics)
+
   send: (messages, cb) ->
+    @_send(messages, cb)
+
+  _send: (messages, cb) ->
     if(@_isReady)
-      messages = (message for message in messages when message.topic in @_topics)
+      LOG.info messages
+      messages = ({topic:message.topic, messages:JSON.stringify(message.messages)} for message in messages when message.topic in @_topics)
       LOG.trace("I am connected and we filtered out any messages that cannot be sent. So publish the remaining messages: ", messages)
       @_client.send(messages, cb)
     else
