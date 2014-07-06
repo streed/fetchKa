@@ -1,8 +1,12 @@
+log4js = require("log4js")
+log4js.replaceConsole()
 kafka = require("kafka-node")
 Consumer = kafka.HighLevelConsumer
 Producer = kafka.HighLevelProducer
 
 exports.FetchKaConsumer = class FetchKaConsumer
+
+  LOG = log4js.getLogger("FetchKaConsumer")
 
   class InnerBuilder
     constructor: () ->
@@ -30,26 +34,35 @@ exports.FetchKaConsumer = class FetchKaConsumer
     for t in topics
       @_listeners[t.topic] = []
 
+    LOG.info("Listening to: ", topics)
+
   _onMessage: (message) ->
     if message.topic of @_listeners
+      LOG.trace("Received a message and forwarding it to the listeners: ", message)
       for listener in @_listeners[message.topic]
         listener.onMessage(message)
+    else
+      LOG.debug("Received message was for a topic that I am not following: ", message)
 
   _onError: (err) ->
+    LOG.error("Error: ", err)
     for listener in @_listeners
       listener.onError(err)
 
   register: (listener) ->
+    LOG.trace("Registering: ", listener.constructor.name)
     if listener.topic not of @_listeners
       throw new Error("This client is not listening to: " + listener.topic)
     @_listeners[listener.topic].push listener
     @
 
-  deregister: (listener) ->
+  unregister: (listener) ->
+    LOG.info("Unregistering: ", listener.name)
     @_listeners[listener.topic].filter (l) -> l isnt listener
     @
 
   start: () ->
+    LOG.info("Starting to wait for messages")
     @_client.on "message", @_onMessage.bind(@)
     @_client.on "error", @_onError.bind(@)
 
@@ -82,12 +95,11 @@ exports.FetchKaHandler = class FetchKaHandler
 
   @Builder: InnerBuilder
 
-  constructor: (topic, onMessage, onError) ->
-    @topic = topic
-    @onMessage = onMessage
-    @onError = onError
+  constructor: (@topic, @onMessage, @onError) ->
         
 exports.FetchKaProducer = class FetchKaProducer
+
+  LOG = log4js.getLogger("FetchKaProducer")
   
   class InnerBuilder
     constructor: () ->
@@ -114,10 +126,12 @@ exports.FetchKaProducer = class FetchKaProducer
   @Builder: InnerBuilder
 
   constructor: (@_client, @_topics) ->
+    LOG.trace("Created a new Producer that will publish messages to: ", @_topics)
     @_isReady = false
     @
 
   ready: (cb) ->
+    LOG.trace("Connection to Kafka is ready, running the callback")
     cb.bind(@)
     outer = ->
       @_isReady = true
@@ -128,6 +142,7 @@ exports.FetchKaProducer = class FetchKaProducer
   send: (messages, cb) ->
     if(@_isReady)
       messages = (message for message in messages when message.topic in @_topics)
+      LOG.trace("I am connected and we filtered out any messages that cannot be sent. So publish the remaining messages: ", messages)
       @_client.send(messages, cb)
     else
       throw new Error("Producer is not ready")
