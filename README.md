@@ -5,16 +5,11 @@ This library is designed to make working with Kafka simpler, even though it is a
 the kafka-node library that this code wraps. What we have added is the idea of filter messages through small simple
 and consise handlers. These handlers can take the message and process it in any manner they see fit. 
 
-For example in Fetch's case we receive orders and many different things must be done for each order.
+For example in a webshop case we need to receive orders and many different things must be done for each order.
 
 1. The order must be saved to the database.
 2. A email must be created to become the client's invoice and have this invoice emailed.
 3. A customer-service representative must receive the order within our order handling service.
-4. A drive must be dispatched for the order.
-
-Under the current design we have a RESTful interface that handles these different aspects of code,
-but they are highly coupled and as such make the process very centralised. What we wish to do is break the code down
-into these handler sets and have very small functions work on each message. 
 
 Enough of why here are some examples of the library.
 
