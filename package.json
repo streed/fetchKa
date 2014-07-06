@@ -5,7 +5,8 @@
   "main": "lib/fetchka.js",
   "dependencies": {
     "kafka-node": "^0.2.0",
-    "log4js": "^0.6.15"
+    "log4js": "^0.6.15",
+    "hbase-thrift": "0.0.3"
   },
   "devDependencies": {
     "coffee-script": "~1.7.1"
