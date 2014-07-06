@@ -1,5 +1,5 @@
 {
-  "name": "fetchKa",
+  "name": "fetchka",
   "version": "0.0.2",
   "description": "Kafka But Simpler",
   "main": "lib/fetchka.js",
