@@ -2,12 +2,14 @@
   "name": "fetchKa",
   "version": "0.0.2",
   "description": "Kafka but simpler.",
-  "main": "fetchka.coffee",
+  "main": "lib/fetchka.js",
   "dependencies": {
     "kafka-node": "~0.2.0",
-    "log4js": "^0.6.15"
+    "log4js": "^0.6.15",
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "coffee-script": "^1.7.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,7 +24,6 @@
   },
   "homepage": "https://github.com/streed/fetchKa",
   "directories": {
-    "example": "example"
   },
   "keywords": [
     "kafka",
