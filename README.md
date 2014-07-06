@@ -2,10 +2,10 @@ fetchKa
 =======
 
 This library is designed to make working with Kafka simpler, even though it is already rediculously easy to use with
-the kafka-node library that this code wraps. What we have added is the idea of filter messages through small simple
+the kafka-node library that this code wraps. What we have added is the idea of filter messages through small, simple,
 and consise handlers. These handlers can take the message and process it in any manner they see fit. 
 
-For example in a webshop case we need to receive orders and many different things must be done for each order.
+For example in a webshop use case we need to receive orders and many different things must be done for each order.
 
 1. The order must be saved to the database.
 2. A email must be created to become the client's invoice and have this invoice emailed.
