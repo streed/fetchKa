@@ -1,10 +1,11 @@
 {
   "name": "fetchKa",
-  "version": "0.0.1",
-  "description": "Kafka code for all of fetch.",
+  "version": "0.0.2",
+  "description": "Kafka but simpler.",
   "main": "fetchka.coffee",
   "dependencies": {
-    "kafka-node": "~0.2.0"
+    "kafka-node": "~0.2.0",
+    "log4js": "^0.6.15"
   },
   "devDependencies": {},
   "scripts": {
@@ -15,12 +16,17 @@
     "url": "git://github.com/streed/fetchKa"
   },
   "author": "Sean Reed",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/streed/fetchKa/issues"
   },
   "homepage": "https://github.com/streed/fetchKa",
   "directories": {
     "example": "example"
-  }
+  },
+  "keywords": [
+    "kafka",
+    "message",
+    "passing"
+  ]
 }
