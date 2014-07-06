@@ -1,14 +1,14 @@
 {
   "name": "fetchKa",
   "version": "0.0.2",
-  "description": "Kafka but simpler.",
+  "description": "Kafka But Simpler",
   "main": "lib/fetchka.js",
   "dependencies": {
-    "kafka-node": "~0.2.0",
-    "log4js": "^0.6.15",
+    "kafka-node": "^0.2.0",
+    "log4js": "^0.6.15"
   },
   "devDependencies": {
-    "coffee-script": "^1.7.1"
+    "coffee-script": "~1.7.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,17 +17,16 @@
     "type": "git",
     "url": "git://github.com/streed/fetchKa"
   },
+  "keywords": [
+    "kafka",
+    "message",
+    "passing",
+    "simple"
+  ],
   "author": "Sean Reed",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/streed/fetchKa/issues"
   },
-  "homepage": "https://github.com/streed/fetchKa",
-  "directories": {
-  },
-  "keywords": [
-    "kafka",
-    "message",
-    "passing"
-  ]
+  "homepage": "https://github.com/streed/fetchKa"
 }
