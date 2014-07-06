@@ -77,6 +77,11 @@ It is very simple to create a set of handlers and to publish messages.
 
 In the future we wish to have chained handlers that allow for further processing of messages, as there are cases where a synchronous model of message processing is required where as most cases can be treated as asynchronous.
 
+Notes
+=====
+
+* https://github.com/lgrcyanny/Node-HBase-Thrift2
+
 License
 =======
 
