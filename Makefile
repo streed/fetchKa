@@ -1,15 +1,20 @@
 PATH := ./node_modules/.bin:${PATH}
 
+.PHONY: test clean
+
 init:
-		npm install
+	npm install
+
+test:
+	npm test
 
 clean: 
-		rm -rf lib/
+	rm -rf lib/
 
 build:
-		coffee -o lib/ -c src/
+	coffee -o lib/ -c src/
 
-dist: clean init build
+dist: clean init test build
 
 publish: dist
-		npm publish
+	npm publish
