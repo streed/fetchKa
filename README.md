@@ -77,6 +77,61 @@ It is very simple to create a set of handlers and to publish messages.
 
 In the future we wish to have chained handlers that allow for further processing of messages, as there are cases where a synchronous model of message processing is required where as most cases can be treated as asynchronous.
 
+Proposed Changes
+----------------
+
+There should be a routing table such that a message is sent to the intro and it is sent to all of the downstream handlers.
+Given the following api.
+
+```coffeescript
+FetchKa = require("../fetchKa/fetchKa")
+FetchKaRouting = FetchKa.FetchKaRouting
+FetchKaHandler = FetchKa.FetchKaHandler
+FetchKaConsumer = FetchKa.FetchKaConsumer
+
+rootHandler = FetchKaHandler.Builder()
+  .set({
+    name: "root"
+    topic: "orders"
+    onMessage:((data) ->
+      database.save data
+    ),
+    onError:((err) ->
+      LOG.error err
+    )
+  }).build()
+
+emailHandler = FetchHandler.Builder()
+  .set({
+    upstream: "root"
+    onMessage:((data) ->
+      emailService.send data
+    )
+    onError:((err) ->
+      LOG.error err
+    )
+  }).build()
+  
+routing = FetchKaRouting.get()
+  .addHandler [rootHandler, emailHandler]
+  
+consumer = new FetchKaConsumer.Builder()
+  .addTopic("orders")
+  .connectString("localhost:2181/kafka0.8")
+  .build()
+
+consumer.register(routing).build()).start()
+```
+The above example will create two handlers with the following relationship.
+
+```
+rootHandler => emailHandler
+```
+
+The `rootHandler` contains the database service and the `emailHandler` contains the logic to send a email. What is important is that the `rootHandler` must complete it's process before the `emailHandler` is run. What this means is that `emailHandler` depends on `rootHandler`. Now, this allows for specific dependencies to be built up so that messages are moved through the handlers in a manner that mimics real life use case. In this example we wish to save the order before we email it, but it must only be emailed if the database handler is successful.
+
+This also means we can listen to multiple different topics with very different routings. The routings may share components if the business logic in the handlers are identical, for example calling a method to say the data.
+
 Notes
 =====
 
