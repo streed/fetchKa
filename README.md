@@ -130,7 +130,7 @@ rootHandler => emailHandler
 
 The `rootHandler` contains the database service and the `emailHandler` contains the logic to send a email. What is important is that the `rootHandler` must complete it's process before the `emailHandler` is run. What this means is that `emailHandler` depends on `rootHandler`. Now, this allows for specific dependencies to be built up so that messages are moved through the handlers in a manner that mimics real life use case. In this example we wish to save the order before we email it, but it must only be emailed if the database handler is successful.
 
-This also means we can listen to multiple different topics with very different routings. The routings may share components if the business logic in the handlers are identical, for example calling a method to say the data.
+This also means we can listen to multiple different topics with very different routings. The routings may share components if the business logic in the handlers are identical, for example calling a method to save the data.
 
 Notes
 =====
