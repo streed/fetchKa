@@ -77,8 +77,15 @@ exports.FetchKaHandler = class FetchKaHandler
   class InnerBuilder
     constructor: () ->
       @_topic = undefined
+      @_name = (->
+        id = ""
+        id += Math.random().toString(36).substr(2) while id.length < 8
+      )()
+
       @_onMessage = -> return null
       @_onError = -> return null
+
+    setName: (@_name) -> @
 
     setTopic: (@_topic) -> @
 
@@ -93,7 +100,6 @@ exports.FetchKaHandler = class FetchKaHandler
         @setOnError options.onError
       if "topic" of options
         @setTopic options.topic
-
       @
 
     build: () ->
