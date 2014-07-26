@@ -89,7 +89,7 @@ FetchKaRouting = FetchKa.FetchKaRouting
 FetchKaHandler = FetchKa.FetchKaHandler
 FetchKaConsumer = FetchKa.FetchKaConsumer
 
-rootHandler = FetchKaHandler.Builder()
+db = FetchKaHandler.Builder()
   .set({
     name: "root"
     topic: "orders"
@@ -100,8 +100,19 @@ rootHandler = FetchKaHandler.Builder()
       LOG.error err
     )
   }).build()
+  
+payment = FetchKaHandler.Builder()
+  .set({
+    topic: "orders"
+    onMessage:((data) ->
+      payment.charge data
+    ),
+    onError:((err) ->
+      LOG.error err
+    )
+  }).build()
 
-emailHandler = FetchHandler.Builder()
+email = FetchHandler.Builder()
   .set({
     upstream: "root"
     onMessage:((data) ->
@@ -112,8 +123,20 @@ emailHandler = FetchHandler.Builder()
     )
   }).build()
   
-routing = FetchKaRouting.get()
-  .addHandler [rootHandler, emailHandler]
+driver = FetchHandler.Builder()
+  .set({
+    upstream: "root"
+    onMessage:((data) ->
+      driverService.find data
+    )
+    onError:((err) ->
+      LOG.error err
+    )
+  }).build()
+  
+routing = FetchKaRouting.Builder("order")
+  .routing [ db, [ payment, [ email, driver ] ] ]
+  .build()
   
 consumer = new FetchKaConsumer.Builder()
   .addTopic("orders")
@@ -125,7 +148,13 @@ consumer.register(routing).build()).start()
 The above example will create two handlers with the following relationship.
 
 ```
-rootHandler => emailHandler
+    "order": ε
+         |
+         db
+         |
+      payment
+      /     \
+   email   driver
 ```
 
 The `rootHandler` contains the database service and the `emailHandler` contains the logic to send a email. What is important is that the `rootHandler` must complete it's process before the `emailHandler` is run. What this means is that `emailHandler` depends on `rootHandler`. Now, this allows for specific dependencies to be built up so that messages are moved through the handlers in a manner that mimics real life use case. In this example we wish to save the order before we email it, but it must only be emailed if the database handler is successful.
