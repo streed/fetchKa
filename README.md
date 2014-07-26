@@ -91,7 +91,6 @@ FetchKaConsumer = FetchKa.FetchKaConsumer
 
 db = FetchKaHandler.Builder()
   .set({
-    name: "root"
     topic: "orders"
     onMessage:((data) ->
       database.save data
@@ -114,7 +113,6 @@ payment = FetchKaHandler.Builder()
 
 email = FetchHandler.Builder()
   .set({
-    upstream: "root"
     onMessage:((data) ->
       emailService.send data
     )
@@ -125,7 +123,6 @@ email = FetchHandler.Builder()
   
 driver = FetchHandler.Builder()
   .set({
-    upstream: "root"
     onMessage:((data) ->
       driverService.find data
     )
