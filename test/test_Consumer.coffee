@@ -10,7 +10,7 @@ makeHandler = () ->
     .setOnMessage(fake)
     .build()
 
-  console.log h
+  console.log "h", h.onMessage
 
   return h
 

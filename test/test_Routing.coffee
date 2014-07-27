@@ -13,6 +13,7 @@ makeHandler = (name) ->
         onError:((err) ->
           console.log err
         ),
+        counter: 0,
       })
       .build()
 

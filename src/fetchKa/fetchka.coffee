@@ -76,41 +76,47 @@ exports.FetchKaHandler = class FetchKaHandler
 
   class InnerBuilder
     constructor: () ->
-      @_topic = undefined
-      @_name = (->
+      @params = {}
+      @params.topic = "*"
+      @params.name = (->
         id = ""
         id += Math.random().toString(36).substr(2) while id.length < 8
       )()
 
-      @_onMessage = -> return null
-      @_onError = -> return null
+      @params.onMessage = -> return null
+      @params.onError = -> return null
 
-    setName: (@_name) -> @
+    setName: (name) ->
+      @params.name = name
+      @
 
-    setTopic: (@_topic) -> @
+    setTopic: (topic) ->
+      @params.topic = topic
+      @
 
-    setOnMessage: (@_onMessage) -> @
+    setOnMessage: (onMessage) ->
+      @params.onMessage = onMessage
+      @
 
-    setOnError: (@_onError) -> @
+    setOnError: (onError) ->
+      @params.onError = onError
+      @
 
     set: (options) ->
-      if "onMessage" of options
-        @setOnMessage options.onMessage
-      if "onError" of options
-        @setOnError options.onError
-      if "topic" of options
-        @setTopic options.topic
-      if "name" of options
-        @name = options.name
+      for key, value of options
+        @params[key] = value
       @counter = 0
       @
 
     build: () ->
-      return new FetchKaHandler(@_topic, @_onMessage, @_onError, @name, @counter)
+      return new FetchKaHandler(@params)
 
   @Builder: InnerBuilder
 
-  constructor: (@topic, @onMessage, @onError, @name, @counter) ->
+  constructor: (options) ->
+    for key, value of options
+      @[key] = value
+    console.log @
         
 exports.FetchKaProducer = class FetchKaProducer
 
