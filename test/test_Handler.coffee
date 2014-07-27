@@ -19,5 +19,4 @@ describe 'FetchKaHandler.Builder', ->
       handler = new Handler.Builder()
         .setOnMessage(fake)
         .build()
-      console.log handler
       assert.equal fake, handler.onMessage

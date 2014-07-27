@@ -10,8 +10,6 @@ makeHandler = () ->
     .setOnMessage(fake)
     .build()
 
-  console.log "h", h.onMessage
-
   return h
 
 describe 'FetchKaConsumer.Builder', ->
