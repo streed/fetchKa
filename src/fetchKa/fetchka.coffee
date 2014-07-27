@@ -100,14 +100,17 @@ exports.FetchKaHandler = class FetchKaHandler
         @setOnError options.onError
       if "topic" of options
         @setTopic options.topic
+      if "name" of options
+        @name = options.name
+      @counter = 0
       @
 
     build: () ->
-      return new FetchKaHandler(@_topic, @_onMessage, @_onError)
+      return new FetchKaHandler(@_topic, @_onMessage, @_onError, @name, @counter)
 
   @Builder: InnerBuilder
 
-  constructor: (@topic, @onMessage, @onError) ->
+  constructor: (@topic, @onMessage, @onError, @name, @counter) ->
         
 exports.FetchKaProducer = class FetchKaProducer
 

@@ -6,13 +6,8 @@ class FetchKaProxy
 
   constructor: (@handler) ->
     
-  setDownstream: (@downstream) ->
-
   onMessage: (message) ->
     @handler.onMessage message
-
-    for d in @downstream
-      d.onMessage message
 
 exports.FetchKaRouting = class FetchKaRouting
 
@@ -41,4 +36,11 @@ exports.FetchKaRouting = class FetchKaRouting
     for s in subLevel
       @next.push new FetchKaRouting.Builder(@topic).routing(s).build()
 
+  onMessage: (message) ->
+    LOG.trace message
+    for l in @level
+      l.onMessage message
+
+    for n in @next
+      n.onMessage message
 
