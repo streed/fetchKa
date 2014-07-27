@@ -5,6 +5,8 @@ class FetchKaProxy
   LOG = log4js.getLogger("FetchKaProxy")
 
   constructor: (@handler) ->
+    @topic = @handler.topic
+    @name = @handler.name
     
   onMessage: (message) ->
     @handler.onMessage message
@@ -39,8 +41,10 @@ exports.FetchKaRouting = class FetchKaRouting
   onMessage: (message) ->
     LOG.trace message
     for l in @level
-      l.onMessage message
+      if l.topic == "*" or @topic == l.topic
+        l.onMessage message
 
     for n in @next
-      n.onMessage message
+      if n.topic == "*" or @topic == n.topic
+        n.onMessage message
 
