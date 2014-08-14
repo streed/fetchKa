@@ -1,7 +1,7 @@
-FetchKaProducer = require("../fetchKa/fetchka").FetchKaProducer
+FetchKaProducer = require("../fetchka").FetchKaProducer
 
 producer = new FetchKaProducer.Builder()
-                .connectString("localhost:2181/kafka0.8")
+                .connectString("localhost:2181")
                 .setTopics(["orders"])
                 .build()
 producer.ready(->

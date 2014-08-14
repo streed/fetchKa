@@ -37,7 +37,8 @@ exports.FetchKaHandler = class FetchKaHandler
     build: () ->
       return new FetchKaHandler(@params)
 
-  @Builder: InnerBuilder
+  @Builder: () ->
+    return new InnerBuilder
 
   constructor: (options) ->
     for key, value of options

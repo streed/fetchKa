@@ -11,6 +11,7 @@ exports.FetchKaConsumer = class FetchKaConsumer
     constructor: () ->
       @_topics = []
       @_options = {}
+      @_options["connectStr"] = "localhost:2181"
       @
 
     addTopic: (t) ->
@@ -22,7 +23,7 @@ exports.FetchKaConsumer = class FetchKaConsumer
       @
 
     build: () ->
-      kafkaClient = new kafka.Client
+      kafkaClient = new kafka.Client @_options["connectStr"]
       return new FetchKaConsumer( new Consumer(kafkaClient, @_topics, @_options), @_topics)
 
   @Builder: InnerBuilder

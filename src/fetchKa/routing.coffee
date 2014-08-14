@@ -1,5 +1,4 @@
 log4js = require("log4js")
-log4js.replaceConsole()
 
 class FetchKaProxy
   LOG = log4js.getLogger("FetchKaProxy")
@@ -17,6 +16,7 @@ exports.FetchKaRouting = class FetchKaRouting
 
   class InnerBuilder
     constructor: (@_topic) ->
+      @
       
     routing: (@route) ->
       @
@@ -26,7 +26,8 @@ exports.FetchKaRouting = class FetchKaRouting
       routing.addRouting @route
       return routing
 
-  @Builder: InnerBuilder
+  @Builder: (topic) ->
+    return new InnerBuilder(topic)
 
   constructor: (@topic) ->
     @level = []
@@ -39,7 +40,6 @@ exports.FetchKaRouting = class FetchKaRouting
       @next.push new FetchKaRouting.Builder(@topic).routing(s).build()
 
   onMessage: (message) ->
-    LOG.trace message
     for l in @level
       if l.topic == "*" or @topic == l.topic
         l.onMessage message

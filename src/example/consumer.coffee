@@ -12,7 +12,7 @@ handler = new FetchKaHandler.Builder()
 
 consumer = new FetchKaConsumer.Builder()
                   .addTopic("orders")
-                  .connectString("localhost:2181/kafka0.8")
+                  .connectString("localhost:2181")
                   .build()
 consumer
   .register(

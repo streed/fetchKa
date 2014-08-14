@@ -1,4 +1,4 @@
-FetchKa = require("../fetchKa/fetchKa")
+FetchKa = require "../fetchka"
 FetchKaRouting = FetchKa.FetchKaRouting
 FetchKaHandler = FetchKa.FetchKaHandler
 FetchKaConsumer = FetchKa.FetchKaConsumer
@@ -8,7 +8,7 @@ databases = {
     console.log "Saving", data
 }
 
-payment = {
+payments = {
   charge: (data) ->
     console.log "Charging", data
 }
@@ -27,7 +27,7 @@ db = FetchKaHandler.Builder()
   .set({
     topic: "orders"
     onMessage:((data) ->
-      database.save data
+      databases.save data
     ),
     onError:((err) ->
       LOG.error err
@@ -38,14 +38,14 @@ payment = FetchKaHandler.Builder()
   .set({
     topic: "orders"
     onMessage:((data) ->
-      payment.charge data
+      payments.charge data
     ),
     onError:((err) ->
       LOG.error err
     )
   }).build()
 
-email = FetchHandler.Builder()
+email = FetchKaHandler.Builder()
   .set({
     onMessage:((data) ->
       emailService.send data
@@ -55,7 +55,7 @@ email = FetchHandler.Builder()
     )
   }).build()
 
-driver = FetchHandler.Builder()
+driver = FetchKaHandler.Builder()
   .set({
     onMessage:((data) ->
       driverService.find data
@@ -65,13 +65,14 @@ driver = FetchHandler.Builder()
     )
   }).build()
 
-routing = FetchKaRouting.Builder("order")
-  .routing [ db, [ payment, [ email, driver ] ] ]
+routing = FetchKaRouting.Builder("orders")
+  .routing [ db, [ email, [ payment, driver ] ] ]
   .build()
 
 consumer = new FetchKaConsumer.Builder()
   .addTopic("orders")
-  .connectString("localhost:2181/kafka0.8")
+  .connectString("localhost:2181")
   .build()
 
-consumer.register(routing).build()).start()
+consumer.register(routing).start()
+

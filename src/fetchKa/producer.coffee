@@ -10,6 +10,7 @@ exports.FetchKaProducer = class FetchKaProducer
   class InnerBuilder
     constructor: () ->
       @_options = {}
+      @_options["connectStr"] = "localhost:2181"
       @_topics = []
 
     connectString: (connectStr) ->
@@ -24,7 +25,7 @@ exports.FetchKaProducer = class FetchKaProducer
       @
 
     build: () ->
-      kafkaClient = new kafka.Client()
+      kafkaClient = new kafka.Client @_options["connectStr"]
       if(@_topics == undefined)
         throw new Error("Producer requires a list of valid topics.")
       return new FetchKaProducer( new Producer(kafkaClient, @_options), @_topics)
