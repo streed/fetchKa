@@ -1,6 +1,6 @@
 {
   "name": "fetchka",
-  "version": "0.0.6",
+  "version": "0.0.10",
   "description": "Kafka But Simpler",
   "main": "lib/fetchka.js",
   "directories": {

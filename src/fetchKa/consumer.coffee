@@ -41,10 +41,10 @@ exports.FetchKaConsumer = class FetchKaConsumer
     if topic of @_listeners
       LOG.trace("Received a message and forwarding it to the listeners: ", message)
       try
-        message = JSON.parse message.value
+        message = JSON.parse JSON.parse(message.value)
       catch
         LOG.info message
-      LOG.info @_listeners, message.message
+      LOG.info @_listeners, message
       for listener in @_listeners[topic]
         listener.onMessage(message.message)
     else
