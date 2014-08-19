@@ -44,9 +44,9 @@ exports.FetchKaConsumer = class FetchKaConsumer
         message = JSON.parse message.value
       catch
         LOG.info message
-      LOG.info @_listeners, message
+      LOG.info @_listeners, message.message
       for listener in @_listeners[topic]
-        listener.onMessage(message)
+        listener.onMessage(message.message)
     else
       LOG.debug("Received message was for a topic that I am not following: ", message)
 
