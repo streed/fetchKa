@@ -12,6 +12,7 @@ exports.FetchKaProducer = class FetchKaProducer
       @_options = {}
       @_options["connectStr"] = "localhost:2181"
       @_topics = []
+      @_encoder = (msg) -> JSON.stringify msg
 
     connectString: (connectStr) ->
       @_options["connectStr"] = connectStr
@@ -24,6 +25,9 @@ exports.FetchKaProducer = class FetchKaProducer
     setTopics: (@_topics) ->
       @
 
+    setEncoder: (@_encoder) ->
+      @
+
     build: () ->
       kafkaClient = new kafka.Client @_options["connectStr"]
       if(@_topics == undefined)
@@ -32,7 +36,7 @@ exports.FetchKaProducer = class FetchKaProducer
 
   @Builder: InnerBuilder
 
-  constructor: (@_client, @_topics) ->
+  constructor: (@_client, @_topics, @_encoder) ->
     LOG.trace("Created a new Producer that will publish messages to: ", @_topics)
     @_isReady = false
     @
@@ -53,7 +57,7 @@ exports.FetchKaProducer = class FetchKaProducer
         LOG.trace("Batching upto 10 messages before sending to kafka.")
       else
         LOG.trace("Sending a single message to Kafka")
-        @send([{topic: topic, messages: JSON.stringify {message: message}}], cb)
+        @send([{topic: topic, messages:@_encoder({message: message})}], cb)
     else
       throw new Error("Topic is not in the valid list of topics: ", @_topics)
 
@@ -62,8 +66,7 @@ exports.FetchKaProducer = class FetchKaProducer
 
   _send: (messages, cb) ->
     if(@_isReady)
-      LOG.info messages
-      messages = ({topic:message.topic, messages:JSON.stringify(message.messages)} for message in messages when message.topic in @_topics)
+      messages = ({topic:message.topic, messages:@_encoder(message.messages)} for message in messages when message.topic in @_topics)
       LOG.trace("I am connected and we filtered out any messages that cannot be sent. So publish the remaining messages: ", messages)
       @_client.send(messages, cb)
     else
